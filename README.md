@@ -1,79 +1,85 @@
 # CutPathGenerator for Adobe Illustrator
 
-Script JSX tạo đường cắt liên tục trong Adobe Illustrator, giúp giảm số lần dao nhấc và tối ưu đường chạy cho công việc cắt.
+CutPathGenerator là script JSX dành cho Adobe Illustrator, dùng để tạo đường cắt liên tục cho các bố cục dạng lưới hoặc các dãy hình tròn, oval. Mục đích chính là giảm số lần dao phải nhấc trong quá trình cắt và giúp đường chạy gọn hơn.
 
-**Tệp chạy:** [`CutPathGenerator.jsx`](./CutPathGenerator.jsx)
+**Script:** [`CutPathGenerator.jsx`](./CutPathGenerator.jsx)
 
-## Dùng nhanh
+## Cách chạy
 
-1. Mở tài liệu Illustrator và chọn đúng artboard/layer.
-2. Chạy script qua **File → Scripts → Other Script…**.
-3. Chọn kiểu cắt, nhập kích thước và khoảng cách, rồi nhấn **Tạo path / Create paths**.
+1. Mở file cần làm trong Illustrator và chọn artboard hoặc layer phù hợp.
+2. Vào **File → Scripts → Other Script…** rồi chọn `CutPathGenerator.jsx`.
+3. Chọn kiểu đường cắt, nhập thông số cần dùng và nhấn **Tạo path / Create paths**.
 
-Script tạo đối tượng trên tài liệu đang mở, căn giữa theo artboard hiện hành và dùng đơn vị của tài liệu. Path có thể vượt mép artboard; bước kiểm tra chỉ chặn khi vượt sức chứa toàn canvas của Illustrator. Script không tạo tài liệu mới.
+Script tạo path ngay trong tài liệu đang mở, căn giữa theo artboard hiện tại và sử dụng đơn vị đo của tài liệu. Path có thể vượt ra ngoài mép artboard. Việc kiểm tra kích thước chỉ dừng tạo path khi thiết kế vượt giới hạn canvas của Illustrator; script không tự tạo tài liệu mới.
 
-## Chọn kiểu đường cắt
+## Hai kiểu đường cắt
 
-| Kiểu | Dùng cho | Khi khoảng cách = 0 | Khi khoảng cách > 0 |
+| Kiểu | Khi nào nên dùng | Khoảng cách bằng 0 | Khoảng cách lớn hơn 0 |
 |---|---|---|---|
-| **Cắt thẳng** | Đường chạy zíc-zắc theo lưới ô vuông hoặc chữ nhật. Tạo một path liên tục. | Tạo zíc-zắc chuẩn, không chừa khe giữa các ô. | Chừa khe giữa các ô nhưng vẫn nối đường chạy thành một path liên tục. |
-| **Cắt tròn / oval** | Các hình tròn hoặc ellipse nối tiếp. Mỗi dãy là một contour liên tục; một dãy tạo một path. | Các nửa cung lớn nối trực tiếp thành đường scallop. | Thêm nửa cung nhỏ tại khe để nối các cung lớn, rồi quay về bằng cung đối xứng. |
+| **Cắt thẳng** | Lưới ô vuông hoặc chữ nhật, chạy theo đường zíc-zắc | Các ô nối liền nhau theo đường zíc-zắc | Có khe giữa các ô nhưng đường chạy vẫn là một path liên tục |
+| **Cắt tròn / oval** | Các dãy hình tròn hoặc ellipse | Các nửa cung lớn nối trực tiếp thành đường scallop | Có thêm nửa cung nhỏ để nối qua khe, sau đó đường chạy quay về bằng cung đối xứng |
 
-Đường chạy liên tục được thiết kế để hạn chế điểm bắt đầu/kết thúc và tối ưu thời gian cắt. Thời gian thực tế còn tùy máy cắt, phần mềm điều khiển và cách thiết lập đường dao.
+Mục tiêu của cách nối này là hạn chế số điểm bắt đầu và kết thúc của đường cắt. Thời gian thực tế còn phụ thuộc vào máy cắt, phần mềm điều khiển và cách thiết lập đường dao.
 
-## Các ô nhập
+## Thông số khi cắt thẳng
 
-### Cắt thẳng
+- **Chiều rộng / Chiều cao:** kích thước của từng ô. Đặt hai giá trị bằng nhau để tạo lưới vuông; đặt khác nhau để tạo lưới chữ nhật.
+- **Số cột / Số hàng:** số ô theo chiều ngang và chiều dọc.
+- **Khoảng cách:** khe giữa các ô. Nhập `0` để tạo zíc-zắc chuẩn; nhập giá trị lớn hơn `0` để chừa khe mà vẫn giữ đường chạy liên tục.
+- **Lề:** phần lề ở đầu và cuối đường chạy.
+- **Độ dày nét:** độ dày stroke của path được tạo.
 
-- **Chiều rộng / Chiều cao:** kích thước ô; đặt bằng nhau để tạo lưới vuông, khác nhau để tạo lưới chữ nhật.
-- **Số cột / Số hàng:** số ô theo chiều ngang/dọc.
-- **Khoảng cách:** khoảng hở giữa các ô; bằng 0 tạo zíc-zắc chuẩn, lớn hơn 0 tạo đường liên tục có khe.
-- **Lề:** lề đầu/cuối đường chạy.
-- **Độ dày nét:** stroke của path.
+## Thông số khi cắt tròn hoặc oval
 
-### Cắt tròn / oval
-
-- **Hình:** chọn Circle hoặc Ellipse. Circle dùng một đường kính; Ellipse nhập chiều ngang và chiều cao.
-- **Hướng:** xếp theo hàng ngang hoặc dọc.
-- **Số đường tròn:** số cung tròn/ellipse lớn trong mỗi dãy.
+- **Hình:** chọn Circle hoặc Ellipse. Với Circle, nhập đường kính; với Ellipse, nhập chiều rộng và chiều cao.
+- **Hướng:** chọn cách xếp theo hàng ngang hoặc hàng dọc.
+- **Số đường tròn:** số cung tròn hoặc ellipse lớn trong mỗi dãy.
 - **Số dãy:** số path được xếp song song.
-- **Khoảng cách cung:** khoảng hở dọc theo dãy; bằng 0 nối trực tiếp, lớn hơn 0 thêm nửa cung nối nhỏ.
-- **Khoảng cách dãy:** khoảng hở mép-đến-mép giữa hai dãy, không phải khoảng cách giữa hai tâm.
-- **Độ dày nét:** stroke của path.
+- **Khoảng cách cung:** khe dọc theo một dãy. Giá trị `0` nối các cung lớn trực tiếp; giá trị lớn hơn `0` sẽ tạo thêm nửa cung nhỏ để nối chúng.
+- **Khoảng cách dãy:** khoảng hở tính từ mép dãy này đến mép dãy kế tiếp, không phải khoảng cách giữa hai tâm.
+- **Độ dày nét:** độ dày stroke của path.
 
-Ví dụ: hai dãy Circle đường kính 30 mm với khe giữa dãy 3 mm có bước tâm là 33 mm, vì vậy khe hở thực giữa biên hai dãy vẫn là 3 mm.
+Ví dụ, nếu dùng hai dãy hình tròn đường kính 30 mm và đặt khoảng cách dãy là 3 mm, khoảng cách giữa hai tâm sẽ là 33 mm. Khe hở thực tế giữa mép hai dãy vẫn là 3 mm.
 
-## Đơn vị và mặc định
+## Đơn vị và giá trị mặc định
 
-Script theo đơn vị thước trong tài liệu (mm, cm, in, pt, pica hoặc px). Ô số hỗ trợ tối đa ba chữ số thập phân; số lượng cung, dãy, hàng và cột phải là số nguyên dương.
+Script lấy đơn vị theo thước trong tài liệu Illustrator, gồm mm, cm, in, pt, pica hoặc px. Các ô nhập số chấp nhận tối đa ba chữ số thập phân. Số cột, hàng, cung và dãy phải là số nguyên dương.
 
-Mặc định ban đầu:
+Giá trị mặc định khi mở giao diện:
 
-- **Cắt thẳng:** ô 30 × 30, 6 cột × 6 hàng, khoảng cách 0, lề 2, nét 0,25.
-- **Cắt tròn / oval:** đường kính 30, 10 đường tròn, 1 dãy, khoảng cách cung 0, khoảng cách dãy 2, nét 0,25.
+- **Cắt thẳng:** ô 30 × 30, 6 cột × 6 hàng, khoảng cách 0, lề 2, độ dày nét 0,25.
+- **Cắt tròn / oval:** đường kính 30, 10 đường tròn, 1 dãy, khoảng cách cung 0, khoảng cách dãy 2, độ dày nét 0,25.
 
-Nếu chưa có spot color `Cut Path`, script tạo spot CMYK `C0 M100 Y100 K0`.
+Nếu tài liệu chưa có spot color tên `Cut Path`, script sẽ tạo màu spot CMYK với thông số `C0 M100 Y100 K0`.
 
-## Lưu tùy chọn
+## Lưu thiết lập
 
-Lần đầu chạy, giao diện mặc định là tiếng Việt. Ngôn ngữ đã chọn, kiểu cắt, hướng, hình dạng và các giá trị nhập được lưu trong:
+Giao diện mặc định dùng tiếng Việt ở lần chạy đầu tiên. Ngôn ngữ, kiểu cắt, hướng, hình dạng và các giá trị đã nhập được lưu trong file:
 
 ```text
 <Folder.userData>/Custom_Path_Generator/preferences.txt
 ```
 
-Tệp cấu hình chỉ dành riêng cho script, không thay đổi thiết lập hệ thống hoặc tùy chọn chung của Illustrator. Xóa tệp này để trở về mặc định.
+File này chỉ lưu tùy chọn của riêng script, không thay đổi thiết lập chung của Illustrator hay hệ thống. Xóa file `preferences.txt` nếu muốn đưa các tùy chọn về mặc định.
 
-## Nền tảng và đóng góp
+## Tương thích
 
-Gói gồm JSX, README, MIT License và `.gitattributes`; có thể giải nén trên Windows hoặc macOS. Script hướng tới Adobe Illustrator desktop có hỗ trợ ExtendScript/JSX. Khả năng tương thích còn tùy phiên bản Illustrator và môi trường; không thể đảm bảo mọi phần cứng hay mọi hệ điều hành.
+Gói gồm file JSX, README, giấy phép MIT và `.gitattributes`. Có thể giải nén trên Windows hoặc macOS. Script được viết cho bản Adobe Illustrator desktop có hỗ trợ ExtendScript/JSX; khả năng hoạt động còn tùy phiên bản Illustrator và môi trường sử dụng.
 
-Theo thử nghiệm của **Nguyễn Hải Thọ** trên máy cá nhân, script hoạt động tốt với nhu cầu sử dụng cụ thể. Script chưa được kiểm tra trên phần lớn cấu hình phần cứng/phiên bản khác. Hãy chạy thử trên thiết lập của bạn trước khi dùng cho sản xuất.
+Theo thử nghiệm của **Nguyễn Hải Thọ** trên máy cá nhân, script đáp ứng nhu cầu sử dụng cụ thể. Script chưa được kiểm tra trên nhiều cấu hình máy và phiên bản Illustrator khác nhau, vì vậy nên chạy thử trên hệ thống của bạn trước khi đưa vào sản xuất.
 
-**Ý tưởng:** Nguyễn Hải Thọ. **Triển khai phiên bản này:** Manus AI (Manus), theo yêu cầu và góp ý của Nguyễn Hải Thọ. Các điều chỉnh tiếp theo được mở cho cộng đồng qua Issues và Pull Requests.
+**Ý tưởng:** Nguyễn Hải Thọ  
+**Triển khai phiên bản hiện tại:** Manus AI (Manus), dựa trên yêu cầu và góp ý của Nguyễn Hải Thọ.
 
-## Lưu ý và giấy phép
+Nếu muốn đề xuất cải tiến hoặc báo lỗi, bạn có thể mở Issue hoặc gửi Pull Request.
 
-Trước khi tạo, script ước tính bounds của thiết kế gồm cả stroke và so với sức chứa toàn canvas Illustrator, không giới hạn theo kích thước artboard đang hoạt động. Canvas tiêu chuẩn tối đa khoảng 227 × 227 in; tài liệu Large Canvas tối đa khoảng 2270 × 2270 in. Nếu thiết kế vượt giới hạn tương ứng, script báo kích thước cần có và dừng mà không tạo path. Script không tự thu nhỏ thiết kế. Số lượng rất lớn vẫn có thể làm Illustrator chậm. Hãy kiểm tra path, spot color và file xuất trước khi gửi máy cắt.
+## Giới hạn và giấy phép
 
-Phát hành theo giấy phép [MIT](./LICENSE). Xác nhận quyền cấp phép cho mã nguồn trước khi phân phối lại.
+Trước khi tạo path, script ước tính bounds của thiết kế, bao gồm cả stroke, rồi kiểm tra với giới hạn toàn canvas của Illustrator. Việc kiểm tra này không giới hạn theo kích thước artboard đang hoạt động.
+
+- Canvas tiêu chuẩn: tối đa khoảng 227 × 227 in.
+- Large Canvas: tối đa khoảng 2270 × 2270 in.
+
+Nếu thiết kế vượt giới hạn tương ứng, script sẽ báo kích thước cần thiết và dừng, không tạo path. Script không tự thu nhỏ thiết kế. Với bố cục có số lượng đối tượng lớn, Illustrator vẫn có thể chạy chậm. Trước khi gửi file đi cắt, hãy kiểm tra lại path, spot color và file xuất.
+
+Phát hành theo giấy phép [MIT](./LICENSE). Hãy xác nhận quyền cấp phép của mã nguồn trước khi phân phối lại.
