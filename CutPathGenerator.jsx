@@ -826,8 +826,13 @@
     buttons.spacing = 4;
     var cancelButton = addLocalized(buttons, 'button', 'Hủy', 'Cancel');
     cancelButton.name = 'cancel';
+    cancelButton.onClick = function () {
+        dialog.close(0);
+    };
     var createButton = addLocalized(buttons, 'button', 'Tạo path', 'Create paths');
     createButton.name = 'ok';
+    // Enter activates Create even when an edit field currently has focus.
+    dialog.defaultElement = createButton;
 
     createButton.onClick = function () {
         var group;
